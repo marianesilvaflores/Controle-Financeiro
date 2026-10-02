@@ -23,3 +23,18 @@ function validar({ nome, tipo }) {
 }
 
 module.exports = router;
+
+router.post('/', (req, res) => {
+  const erro = validar(req.body);
+  if (erro) return res.status(400).json({ erro });
+
+  const categoria = {
+    id: proximoId(banco.categorias),
+    usuarioId: usuarioIdDe(req),
+    nome: req.body.nome.trim(),
+    tipo: req.body.tipo,
+  };
+
+  banco.categorias.push(categoria);
+  res.status(201).json(categoria);
+});
