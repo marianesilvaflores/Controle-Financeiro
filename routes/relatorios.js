@@ -85,3 +85,40 @@ router.get('/extrato', (req, res) => {
         lancamentos: meusLancamentos
     });
 });
+const {
+    contas,
+    lancamentos,
+    categorias
+} = require('../dados/banco');
+
+router.get('/categorias', (req, res) => {
+    const meusLancamentos = lancamentos.filter(
+        lancamento => lancamento.usuarioId === req.usuarioId
+    );
+
+    const resultado = [];
+
+    for (const categoria of categorias) {
+        const lancamentosDaCategoria = meusLancamentos.filter(
+            lancamento => lancamento.categoriaId === categoria.id
+        );
+
+        let totalCentavos = 0;
+
+        for (const lancamento of lancamentosDaCategoria) {
+            if (lancamento.tipo === 'despesa') {
+                totalCentavos += lancamento.valorCentavos;
+            }
+        }
+
+        if (totalCentavos > 0) {
+            resultado.push({
+                categoriaId: categoria.id,
+                categoria: categoria.nome,
+                totalCentavos
+            });
+        }
+    }
+
+    return res.status(200).json(resultado);
+});
