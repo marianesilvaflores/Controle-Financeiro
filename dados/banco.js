@@ -1,4 +1,5 @@
 const usuarios = [];
 const contas = [];
+const sessoes = [];
 
-module.exports = { usuarios, contas };
+module.exports = { usuarios, contas, sessoes };

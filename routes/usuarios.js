@@ -1,7 +1,7 @@
 const express = require('express');
 const crypto = require('node:crypto');
 const { promisify } = require('node:util');
-const { usuarios } = require('../dados/banco');
+const { usuarios, sessoes } = require('../dados/banco');
 
 const router = express.Router();
 const gerarHash = promisify(crypto.scrypt);
@@ -54,6 +54,53 @@ router.post('/', async (req, res, next) => {
       id: usuario.id,
       nome: usuario.nome,
       email: usuario.email
+    });
+  } catch (erro) {
+    next(erro);
+  }
+});
+router.post('/login', async (req, res, next) => {
+  try {
+    const { email, senha } = req.body || {};
+
+    if (typeof email !== 'string' ||
+        typeof senha !== 'string' ||
+        senha.length < 8 || senha.length > 128) {
+      return res.status(400).json({
+        erro: 'Informe email e senha válidos.'
+      });
+    }
+
+    const usuario = usuarios.find(usuario =>
+      usuario.email === email.trim().toLowerCase()
+    );
+
+    if (!usuario) {
+      return res.status(401).json({
+        erro: 'Email ou senha incorretos.'
+      });
+    }
+
+    const hash = await gerarHash(senha, usuario.salt, 64);
+    const hashSalvo = Buffer.from(usuario.senhaHash, 'hex');
+
+    if (!crypto.timingSafeEqual(hash, hashSalvo)) {
+      return res.status(401).json({
+        erro: 'Email ou senha incorretos.'
+      });
+    }
+
+    const token = crypto.randomBytes(32).toString('hex');
+
+    sessoes.push({
+      token,
+      usuarioId: usuario.id,
+      expiraEm: Date.now() + 8 * 60 * 60 * 1000
+    });
+
+    return res.status(200).json({
+      mensagem: 'Login realizado.',
+      token
     });
   } catch (erro) {
     next(erro);
