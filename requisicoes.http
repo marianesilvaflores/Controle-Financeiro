@@ -9,3 +9,17 @@ Content-Type: application/json
 
 ### Listar contas
 GET http://localhost:3000/contas
+
+### Criar categoria
+POST http://localhost:3000/categorias
+Content-Type: application/json
+Authorization: Bearer COLE_O_TOKEN_AQUI
+
+{
+  "nome": "Salário",
+  "tipo": "receita"
+}
+
+### Listar categorias
+GET http://localhost:3000/categorias
+Authorization: Bearer COLE_O_TOKEN_AQUI
