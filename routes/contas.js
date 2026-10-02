@@ -87,4 +87,18 @@ router.patch('/:id', (req, res) => {
   return res.status(200).json(conta);
 });
 
+router.delete('/:id', (req, res) => {
+  const indice = contas.findIndex(conta => conta.id === req.params.id);
+
+  if (indice === -1) {
+    return res.status(404).json({
+      erro: 'Conta não encontrada.'
+    });
+  }
+
+  contas.splice(indice, 1);
+
+  return res.status(204).send();
+});
+
 module.exports = router;
