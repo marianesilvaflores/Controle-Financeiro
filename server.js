@@ -1,6 +1,8 @@
 const express = require('express');
+const autenticar = require('./middlewares/autenticar'); 
 const routesContas = require('./routes/contas');
 const rotasUsuarios = require('./routes/usuarios');
+const routesCategorias = require('./routes/categorias'); 
 
 const routesRelatorios = require('./routes/relatorios');
 
@@ -10,6 +12,7 @@ const PORTA = 3000;
 app.use(express.json());
 app.use('/contas', routesContas);
 app.use('/usuarios',rotasUsuarios);
+app.use('/categorias', autenticar, routesCategorias); 
 
 app.use('/relatorios', routesRelatorios);
 
