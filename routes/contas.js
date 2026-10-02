@@ -3,7 +3,7 @@ const crypto = require('node:crypto');
 
 const router = express.Router();
 
-const contas = [];
+const { contas } = require('../dados/banco');
 
 router.get('/', (req, res) => {
   res.status(200).json(contas);
