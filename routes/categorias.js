@@ -38,3 +38,10 @@ router.post('/', (req, res) => {
   banco.categorias.push(categoria);
   res.status(201).json(categoria);
 });
+
+router.get('/', (req, res) => {
+  const lista = banco.categorias.filter(
+    (c) => c.usuarioId === usuarioIdDe(req)
+  );
+  res.json(lista);
+});
