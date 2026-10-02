@@ -47,3 +47,41 @@ router.get('/saldo/:contaId', (req, res) => {
         saldoCentavos: saldo
     });
 });
+
+router.get('/extrato', (req, res) => {
+    const { inicio, fim } = req.query;
+
+    if (!inicio || !fim) {
+        return res.status(400).json({
+            erro: 'Informe as datas de início e fim.'
+        });
+    }
+
+    const meusLancamentos = lancamentos.filter(lancamento =>
+        lancamento.usuarioId === req.usuarioId &&
+        lancamento.data >= inicio &&
+        lancamento.data <= fim
+    );
+
+    let receitasCentavos = 0;
+    let despesasCentavos = 0;
+
+    for (const lancamento of meusLancamentos) {
+        if (lancamento.tipo === 'receita') {
+            receitasCentavos += lancamento.valorCentavos;
+        }
+
+        if (lancamento.tipo === 'despesa') {
+            despesasCentavos += lancamento.valorCentavos;
+        }
+    }
+
+    return res.status(200).json({
+        inicio,
+        fim,
+        receitasCentavos,
+        despesasCentavos,
+        saldoCentavos: receitasCentavos - despesasCentavos,
+        lancamentos: meusLancamentos
+    });
+});
