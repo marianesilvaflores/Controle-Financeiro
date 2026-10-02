@@ -1,0 +1,11 @@
+### Cadastrar conta
+POST http://localhost:3000/contas
+Content-Type: application/json
+
+{
+  "nome": "Carteira",
+  "saldoInicialCentavos": 10000
+}
+
+### Listar contas
+GET http://localhost:3000/contas
