@@ -1,7 +1,9 @@
 const express = require('express');
 const crypto = require('node:crypto');
+const autenticar = require('../middlewares/autenticar');
 
 const router = express.Router();
+router.use(autenticar);
 
 const { contas } = require('../dados/banco');
 
