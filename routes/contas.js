@@ -34,5 +34,16 @@ router.post('/', (req, res) => {
 
   return res.status(201).json(conta);
 });
+router.get('/:id', (req, res) => {
+  const conta = contas.find(conta => conta.id === req.params.id);
+
+  if (!conta) {
+    return res.status(404).json({
+      erro: 'Conta não encontrada.'
+    });
+  }
+
+  return res.status(200).json(conta);
+});
 
 module.exports = router;
