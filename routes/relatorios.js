@@ -122,3 +122,36 @@ router.get('/categorias', (req, res) => {
 
     return res.status(200).json(resultado);
 });
+router.get('/mensal', (req, res) => {
+    const meusLancamentos = lancamentos.filter(
+        lancamento => lancamento.usuarioId === req.usuarioId
+    );
+
+    const meses = {};
+
+    for (const lancamento of meusLancamentos) {
+        const mes = lancamento.data.slice(0, 7);
+
+        if (!meses[mes]) {
+            meses[mes] = {
+                receitasCentavos: 0,
+                despesasCentavos: 0
+            };
+        }
+
+        if (lancamento.tipo === 'receita') {
+            meses[mes].receitasCentavos += lancamento.valorCentavos;
+        }
+
+        if (lancamento.tipo === 'despesa') {
+            meses[mes].despesasCentavos += lancamento.valorCentavos;
+        }
+    }
+
+    for (const mes of Object.values(meses)) {
+        mes.saldoCentavos =
+            mes.receitasCentavos - mes.despesasCentavos;
+    }
+
+    return res.status(200).json(meses);
+});
