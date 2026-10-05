@@ -1,6 +1,6 @@
 const express = require('express');
 const autenticar = require('../middlewares/autenticar');
-const { contas, lançameto, categorias } = requeire('../dados/banco');
+const { contas, lançameto, categorias } = require('../dados/banco');
 const router = express.Router();
 
 router.use(autenticar);
