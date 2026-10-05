@@ -1,6 +1,6 @@
 const express = require('express');
 const autenticar = require('../middlewares/autenticar');
-const { contas, lancamentos } = require('../dados/banco');
+const { contas, lançameto, categorias } = require('../dados/banco');
 const router = express.Router();
 
 router.use(autenticar);
@@ -11,7 +11,7 @@ router.get('/', (req, res) => {
     });
 });
 
-module.exports = router;
+
 
 router.get('/saldo/:contaId', (req, res) => {
     const conta = contas.find(conta =>
@@ -85,11 +85,6 @@ router.get('/extrato', (req, res) => {
         lancamentos: meusLancamentos
     });
 });
-const {
-    contas,
-    lancamentos,
-    categorias
-} = require('../dados/banco');
 
 router.get('/categorias', (req, res) => {
     const meusLancamentos = lancamentos.filter(
@@ -155,3 +150,4 @@ router.get('/mensal', (req, res) => {
 
     return res.status(200).json(meses);
 });
+module.exports = router;
