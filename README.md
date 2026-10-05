@@ -75,3 +75,11 @@ Os dados ficam em memória.
 Ao reiniciar o servidor, usuários, contas e sessões são apagados.
 Os tokens de login têm validade de oito horas, desde que o servidor
 não seja reiniciado.
+## Relatórios
+
+As funcionalidades de relatório permitem consultar informações financeiras do usuário autenticado.
+
+### Saldo por conta
+
+```http
+GET /relatorios/saldo/:contaId
