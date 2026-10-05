@@ -40,7 +40,7 @@ Authorization: Bearer {{login.response.body.token}}
 {
   "contaId": 1,
   "categoriaId": 1,
-  "descricao": "Salário de outubro",
+  "descricao": "Salário de ouutubro",
   "valorCentavos": 250000,
   "tipo": "receita",
   "data": "2026-10-05"
