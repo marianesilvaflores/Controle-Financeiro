@@ -22,7 +22,6 @@ function validar({ nome, tipo }) {
   return null;
 }
 
-
 router.post('/', (req, res) => {
   const erro = validar(req.body);
   if (erro) return res.status(400).json({ erro });
@@ -38,14 +37,12 @@ router.post('/', (req, res) => {
   res.status(201).json(categoria);
 });
 
-
 router.get('/', (req, res) => {
   const lista = banco.categorias.filter(
     (c) => c.usuarioId === usuarioIdDe(req)
   );
   res.json(lista);
 });
-
 
 router.get('/:id', (req, res) => {
   const categoria = banco.categorias.find(
@@ -57,7 +54,6 @@ router.get('/:id', (req, res) => {
   res.json(categoria);
 });
 
-
 router.put('/:id', (req, res) => {
   const categoria = banco.categorias.find(
     (c) => c.id === Number(req.params.id) && c.usuarioId === usuarioIdDe(req)
@@ -68,7 +64,6 @@ router.put('/:id', (req, res) => {
 
   const erro = validar(req.body);
   if (erro) return res.status(400).json({ erro });
-
 
   if (req.body.tipo !== categoria.tipo) {
     const emUso = banco.lancamentos.some((l) => l.categoriaId === categoria.id);
@@ -83,7 +78,6 @@ router.put('/:id', (req, res) => {
   categoria.tipo = req.body.tipo;
   res.json(categoria);
 });
-
 
 router.delete('/:id', (req, res) => {
   const indice = banco.categorias.findIndex(
@@ -107,3 +101,4 @@ router.delete('/:id', (req, res) => {
 });
 
 module.exports = router;
+
