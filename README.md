@@ -156,3 +156,34 @@ Regras:
 - `nome` é obrigatório e `tipo` deve ser `receita` ou `despesa` (400).
 - Não é possível excluir uma categoria que tenha lançamentos (409).
 - Não é possível mudar o `tipo` de uma categoria que tenha lançamentos (409).
+
+## Lançamentos
+
+Todas as rotas exigem o header `Authorization: Bearer TOKEN`, com o token obtido em `POST /usuarios/login`. Cada usuário só acessa os próprios lançamentos.
+
+Campos: `id`, `usuarioId`, `contaId`, `categoriaId`, `descricao`, `valorCentavos`, `tipo` (`receita` ou `despesa`) e `data` (formato `AAAA-MM-DD`).
+
+| Método | Rota | Descrição | Respostas |
+|--------|------|-----------|-----------|
+| POST | /lancamentos | Cadastra um lançamento | 201, 400, 401 |
+| GET | /lancamentos | Lista os lançamentos do usuário | 200, 401 |
+| GET | /lancamentos/:id | Consulta um lançamento | 200, 401, 404 |
+| PUT | /lancamentos/:id | Edita um lançamento | 200, 400, 401, 404 |
+| DELETE | /lancamentos/:id | Exclui um lançamento | 204, 401, 404 |
+
+Exemplo de corpo para cadastrar ou editar:
+
+{
+  "contaId": "ID_DA_CONTA",
+  "categoriaId": 1,
+  "descricao": "Salário de outubro",
+  "valorCentavos": 250000,
+  "tipo": "receita",
+  "data": "2026-10-05"
+}
+
+Regras:
+- A conta e a categoria devem existir e pertencer ao usuário (400).
+- Receita só pode usar categoria de receita, e despesa só categoria de despesa (400).
+- `valorCentavos` deve ser um número inteiro positivo, em centavos (400).
+- `descricao` é obrigatória e `data` deve estar no formato `AAAA-MM-DD` (400).
