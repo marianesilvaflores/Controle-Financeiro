@@ -1,6 +1,6 @@
 const express = require('express');
 const autenticar = require('../middlewares/autenticar');
-const { contas, lancamentos } = require('../dados/banco');
+const { contas, lancamentos, categorias } = require('../dados/banco');
 const router = express.Router();
 
 router.use(autenticar);
@@ -85,11 +85,6 @@ router.get('/extrato', (req, res) => {
         lancamentos: meusLancamentos
     });
 });
-const {
-    contas,
-    lancamentos,
-    categorias
-} = require('../dados/banco');
 
 router.get('/categorias', (req, res) => {
     const meusLancamentos = lancamentos.filter(
