@@ -135,3 +135,24 @@ Regras:
 - Receita só pode usar categoria de receita, e despesa só categoria de despesa (400).
 - `valorCentavos` deve ser um número inteiro positivo, em centavos (400).
 - `descricao` é obrigatória e `data` deve estar no formato `AAAA-MM-DD` (400).
+
+## Categorias
+
+Todas as rotas exigem o header `Authorization: Bearer TOKEN`, com o token obtido em `POST /usuarios/login`. Cada usuário só acessa as próprias categorias.
+
+Campos: `id`, `usuarioId`, `nome` e `tipo` (`receita` ou `despesa`).
+
+| Método | Rota | Descrição | Respostas |
+|--------|------|-----------|-----------|
+| POST | /categorias | Cadastra uma categoria | 201, 400, 401 |
+| GET | /categorias | Lista as categorias do usuário | 200, 401 |
+| GET | /categorias/:id | Consulta uma categoria | 200, 401, 404 |
+| PUT | /categorias/:id | Edita uma categoria | 200, 400, 401, 404, 409 |
+| DELETE | /categorias/:id | Exclui uma categoria | 204, 401, 404, 409 |
+
+Exemplo de corpo para cadastrar ou editar: `{ "nome": "Salário", "tipo": "receita" }`
+
+Regras:
+- `nome` é obrigatório e `tipo` deve ser `receita` ou `despesa` (400).
+- Não é possível excluir uma categoria que tenha lançamentos (409).
+- Não é possível mudar o `tipo` de uma categoria que tenha lançamentos (409).
