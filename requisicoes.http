@@ -1,19 +1,27 @@
-### Cadastrar conta
-POST http://localhost:3000/contas
+### Cadastrar usuário
+POST http://localhost:3000/usuarios
 Content-Type: application/json
 
 {
-  "nome": "Carteira",
-  "saldoInicialCentavos": 10000
+  "nome": "Teste",
+  "email": "teste@email.com",
+  "senha": "12345678"
 }
 
-### Listar contas
-GET http://localhost:3000/contas
+### Login
+# @name login
+POST http://localhost:3000/usuarios/login
+Content-Type: application/json
+
+{
+  "email": "teste@email.com",
+  "senha": "12345678"
+}
 
 ### Criar categoria
 POST http://localhost:3000/categorias
 Content-Type: application/json
-Authorization: Bearer COLE_O_TOKEN_AQUI
+Authorization: Bearer {{login.response.body.token}}
 
 {
   "nome": "Salário",
@@ -22,4 +30,22 @@ Authorization: Bearer COLE_O_TOKEN_AQUI
 
 ### Listar categorias
 GET http://localhost:3000/categorias
-Authorization: Bearer COLE_O_TOKEN_AQUI
+Authorization: Bearer {{login.response.body.token}}
+
+### Criar lançamento
+POST http://localhost:3000/lancamentos
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.token}}
+
+{
+  "contaId": 1,
+  "categoriaId": 1,
+  "descricao": "Salário de outubro",
+  "valorCentavos": 250000,
+  "tipo": "receita",
+  "data": "2026-10-05"
+}
+
+### Listar lançamentos
+GET http://localhost:3000/lancamentos
+Authorization: Bearer {{login.response.body.token}}
