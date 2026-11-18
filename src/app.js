@@ -1,9 +1,9 @@
 const express = require('express');
-const autenticar = require('../middlewares/autenticar');
-const routesContas = require('../routes/contas');
-const rotasUsuarios = require('../routes/usuarios');
-const routesCategorias = require('../routes/categorias');
-const routesRelatorios = require('../routes/relatorios');
+const autenticar = require('./middlewares/autenticar');
+const routesContas = require('./routes/contas');
+const rotasUsuarios = require('./routes/usuarios');
+const routesCategorias = require('./routes/categorias');
+const routesRelatorios = require('./routes/relatorios');
 
 const app = express();
 
