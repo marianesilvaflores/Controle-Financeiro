@@ -1,8 +1,8 @@
 {
   "name": "controle-financeiro",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "API de controle financeiro pessoal",
+  "main": "src/server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "db:up": "docker start controle-financeiro || docker run -d --name controle-financeiro -p 127.0.0.1:27017:27017 -v controle-financeiro-data:/data/db mongo:8",
