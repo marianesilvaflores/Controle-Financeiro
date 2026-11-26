@@ -1,55 +1,50 @@
-const { contas } = require('../dados/banco');
+const { obterBanco } = require('../config/mongodb');
 
-function listarPorUsuario(usuarioId) {
-  return contas.filter(conta => conta.usuarioId === usuarioId);
-}
-
-function buscarPorId(id, usuarioId) {
-  return contas.find(conta =>
-    conta.id === id && conta.usuarioId === usuarioId
-  );
-}
-
-function criar(conta) {
-  contas.push(conta);
-  return conta;
-}
-
-function atualizar(id, usuarioId, dados) {
-  const conta = buscarPorId(id, usuarioId);
-
-  if (!conta) {
-    return null;
-  }
-
-  if (dados.nome !== undefined) {
-    conta.nome = dados.nome;
-  }
-
-  if (dados.saldoInicialCentavos !== undefined) {
-    conta.saldoInicialCentavos = dados.saldoInicialCentavos;
-  }
+async function inserir(conta) {
+  const documento = { ...conta };
+  await obterBanco().collection('contas').insertOne(documento);
 
   return conta;
 }
 
-function excluir(id, usuarioId) {
-  const indice = contas.findIndex(conta =>
-    conta.id === id && conta.usuarioId === usuarioId
+async function buscarTodas(usuarioId) {
+  return obterBanco()
+    .collection('contas')
+    .find({ usuarioId }, { projection: { _id: 0 } })
+    .toArray();
+}
+
+async function buscarPorId(id, usuarioId) {
+  return obterBanco().collection('contas').findOne(
+    { id, usuarioId },
+    { projection: { _id: 0 } }
   );
+}
 
-  if (indice === -1) {
-    return false;
-  }
+async function atualizar(id, usuarioId, dados) {
+  return obterBanco().collection('contas').findOneAndUpdate(
+    { id, usuarioId },
+    { $set: dados },
+    {
+      returnDocument: 'after',
+      includeResultMetadata: false,
+      projection: { _id: 0 }
+    }
+  );
+}
 
-  contas.splice(indice, 1);
-  return true;
+async function remover(id, usuarioId) {
+  const resultado = await obterBanco()
+    .collection('contas')
+    .deleteOne({ id, usuarioId });
+
+  return resultado.deletedCount === 1;
 }
 
 module.exports = {
-  listarPorUsuario,
+  inserir,
+  buscarTodas,
   buscarPorId,
-  criar,
   atualizar,
-  excluir
+  remover
 };

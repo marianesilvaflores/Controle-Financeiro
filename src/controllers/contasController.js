@@ -12,18 +12,18 @@ function responderErro(erro, res) {
   });
 }
 
-function listar(req, res) {
+async function listar(req, res) {
   try {
-    const contas = contasService.listar(req.usuarioId);
+    const contas = await contasService.listar(req.usuarioId);
     return res.status(200).json(contas);
   } catch (erro) {
     return responderErro(erro, res);
   }
 }
 
-function buscarPorId(req, res) {
+async function buscarPorId(req, res) {
   try {
-    const conta = contasService.buscarPorId(
+    const conta = await contasService.buscarPorId(
       req.params.id,
       req.usuarioId
     );
@@ -34,18 +34,22 @@ function buscarPorId(req, res) {
   }
 }
 
-function criar(req, res) {
+async function criar(req, res) {
   try {
-    const conta = contasService.criar(req.usuarioId, req.body);
+    const conta = await contasService.criar(
+      req.usuarioId,
+      req.body
+    );
+
     return res.status(201).json(conta);
   } catch (erro) {
     return responderErro(erro, res);
   }
 }
 
-function atualizar(req, res) {
+async function atualizar(req, res) {
   try {
-    const conta = contasService.atualizar(
+    const conta = await contasService.atualizar(
       req.params.id,
       req.usuarioId,
       req.body
@@ -57,9 +61,9 @@ function atualizar(req, res) {
   }
 }
 
-function excluir(req, res) {
+async function excluir(req, res) {
   try {
-    contasService.excluir(req.params.id, req.usuarioId);
+    await contasService.excluir(req.params.id, req.usuarioId);
     return res.status(204).send();
   } catch (erro) {
     return responderErro(erro, res);
