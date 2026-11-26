@@ -1,0 +1,32 @@
+{
+  "name": "controle-financeiro",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "db:up": "docker start controle-financeiro || docker run -d --name controle-financeiro -p 127.0.0.1:27017:27017 -v controle-financeiro-data:/data/db mongo:8",
+    "db:down": "docker stop controle-financeiro",
+    "db:logs": "docker logs -f controle-financeiro",
+    "db:reset": "docker rm -f controle-financeiro; docker volume rm controle-financeiro-data",
+    "predev": "npm run db:up",
+    "dev": "node --watch server.js",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/marianesilvaflores/Controle-Financeiro.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/marianesilvaflores/Controle-Financeiro/issues"
+  },
+  "homepage": "https://github.com/marianesilvaflores/Controle-Financeiro#readme",
+  "dependencies": {
+    "cors": "^2.8.6",
+    "express": "^5.2.1"
+  }
+}

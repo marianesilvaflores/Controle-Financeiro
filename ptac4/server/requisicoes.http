@@ -1,0 +1,91 @@
+@base = http://localhost:3000/api/v1
+@token = COLE_O_TOKEN_AQUI
+@contaId = COLE_O_ID_DA_CONTA_AQUI
+@categoriaId = COLE_O_ID_DA_CATEGORIA_AQUI
+@lancamentoId = COLE_O_ID_DO_LANCAMENTO_AQUI
+
+### 1. Cadastrar usuário
+POST {{base}}/usuarios
+Content-Type: application/json
+
+{ "nome": "Ana", "email": "ana@email.com", "senha": "12345678" }
+
+### 2. Login (copie o token da resposta para @token lá em cima)
+POST {{base}}/usuarios/login
+Content-Type: application/json
+
+{ "email": "ana@email.com", "senha": "12345678" }
+
+### 3. Criar conta (copie o id para @contaId)
+POST {{base}}/contas
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{ "nome": "Carteira", "saldoInicialCentavos": 10000 }
+
+### 4. Listar contas
+GET {{base}}/contas
+Authorization: Bearer {{token}}
+
+### 5. Criar categoria de despesa (copie o id para @categoriaId)
+POST {{base}}/categorias
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{ "nome": "Alimentação", "tipo": "despesa" }
+
+### 6. Listar categorias
+GET {{base}}/categorias
+Authorization: Bearer {{token}}
+
+### 7. Criar lançamento (copie o id para @lancamentoId)
+POST {{base}}/lancamentos
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "descricao": "Almoço",
+  "valorCentavos": 2500,
+  "tipo": "despesa",
+  "data": "2026-11-24",
+  "contaId": "{{contaId}}",
+  "categoriaId": "{{categoriaId}}"
+}
+
+### 8. Listar lançamentos
+GET {{base}}/lancamentos
+Authorization: Bearer {{token}}
+
+### 9. Editar lançamento (PUT)
+PUT {{base}}/lancamentos/{{lancamentoId}}
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "descricao": "Almoço com amigos",
+  "valorCentavos": 3500,
+  "tipo": "despesa",
+  "data": "2026-11-24",
+  "contaId": "{{contaId}}",
+  "categoriaId": "{{categoriaId}}"
+}
+
+### 10. Saldo da conta (deve dar 10000 - 3500 = 6500)
+GET {{base}}/relatorios/saldo/{{contaId}}
+Authorization: Bearer {{token}}
+
+### 11. Extrato do mês
+GET {{base}}/relatorios/extrato?inicio=2026-11-01&fim=2026-11-30
+Authorization: Bearer {{token}}
+
+### 12. Despesas por categoria
+GET {{base}}/relatorios/categorias
+Authorization: Bearer {{token}}
+
+### 13. Resumo mensal
+GET {{base}}/relatorios/mensal
+Authorization: Bearer {{token}}
+
+### 14. Excluir lançamento
+DELETE {{base}}/lancamentos/{{lancamentoId}}
+Authorization: Bearer {{token}}
