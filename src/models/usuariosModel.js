@@ -1,21 +1,50 @@
-const { usuarios, sessoes } = require('../dados/banco');
+const { obterBanco } = require('../config/mongodb');
 
-function buscarPorEmail(email) {
-  return usuarios.find(usuario => usuario.email === email);
-}
+async function inserir(usuario) {
+  const colecao = obterBanco().collection('usuarios');
 
-function criar(usuario) {
-  usuarios.push(usuario);
+  await colecao.createIndex({ email: 1 }, { unique: true });
+
+  const documento = { ...usuario };
+  await colecao.insertOne(documento);
+
   return usuario;
 }
 
-function criarSessao(sessao) {
-  sessoes.push(sessao);
-  return sessao;
+async function buscarTodas(filtro = {}) {
+  return obterBanco()
+    .collection('usuarios')
+    .find(filtro)
+    .toArray();
+}
+
+async function buscarPorId(id) {
+  return obterBanco().collection('usuarios').findOne({ id });
+}
+
+async function atualizar(id, dados) {
+  return obterBanco().collection('usuarios').findOneAndUpdate(
+    { id },
+    { $set: dados },
+    {
+      returnDocument: 'after',
+      includeResultMetadata: false
+    }
+  );
+}
+
+async function remover(id) {
+  const resultado = await obterBanco()
+    .collection('usuarios')
+    .deleteOne({ id });
+
+  return resultado.deletedCount === 1;
 }
 
 module.exports = {
-  buscarPorEmail,
-  criar,
-  criarSessao
+  inserir,
+  buscarTodas,
+  buscarPorId,
+  atualizar,
+  remover
 };
