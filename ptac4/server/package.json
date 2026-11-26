@@ -10,7 +10,7 @@
     "db:logs": "docker logs -f controle-financeiro",
     "db:reset": "docker rm -f controle-financeiro; docker volume rm controle-financeiro-data",
     "predev": "npm run db:up",
-    "dev": "node --watch src/server.js",
+    "dev": "node --watch server.js",
     "start": "node server.js"
   },
   "repository": {

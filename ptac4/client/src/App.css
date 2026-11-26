@@ -14,7 +14,7 @@
   margin-bottom: 20px;
   border-radius: 16px;
   color: #fff;
-  background: linear-gradient(135deg, #4f46e5, #7c3aed);
+  background: #1e3a5f;
   box-shadow: var(--sombra);
 }
 
@@ -24,7 +24,7 @@
 }
 
 .cabecalho h1::before {
-  content: "💰 ";
+  content: " ";
 }
 
 .cabecalho button {
@@ -70,7 +70,7 @@
 
 .regiao form .erro {
   background: var(--despesa-fundo);
-  border: 1px solid #fecdd3;
+  border: 1px solid #e2c2c2;
   border-radius: 10px;
   padding: 10px 12px;
   font-size: 0.9rem;
@@ -196,17 +196,17 @@
 .cartao .acoes button:first-child {
   background: #fff;
   color: var(--primaria);
-  border-color: #c7d2fe;
+  border-color: #c5cfdd;
 }
 
 .cartao .acoes button:first-child:hover:not(:disabled) {
-  background: #eef2ff;
+  background: #eef1f6;
 }
 
 .cartao .acoes button:last-child {
   background: #fff;
   color: var(--despesa);
-  border-color: #fecdd3;
+  border-color: #e2c2c2;
 }
 
 .cartao .acoes button:last-child:hover:not(:disabled) {
@@ -238,7 +238,7 @@
   display: grid;
   place-items: center;
   padding: 20px;
-  background: linear-gradient(135deg, #4f46e5, #7c3aed);
+  background: #1e3a5f;
 }
 
 .login-cartao {
@@ -257,7 +257,7 @@
 }
 
 .login .marca::before {
-  content: "💰 ";
+  content: " ";
 }
 
 .login h2 {
@@ -284,7 +284,7 @@
 .login .erro {
   margin: 0;
   background: var(--despesa-fundo);
-  border: 1px solid #fecdd3;
+  border: 1px solid #e2c2c2;
   border-radius: 10px;
   padding: 10px 12px;
   font-size: 0.9rem;
@@ -299,7 +299,7 @@
 }
 
 .botao-link:hover:not(:disabled) {
-  background: #eef2ff;
+  background: #eef1f6;
 }
 
 /* ---------- Celular ---------- */
@@ -316,4 +316,14 @@
     flex-direction: column;
     gap: 2px;
   }
+}
+
+/* ===== Visual simplificado (para remover, apague daqui até o fim) ===== */
+*, *::before, *::after {
+  box-shadow: none !important;
+  text-shadow: none !important;
+  border-radius: 0 !important;
+  background-image: none !important;
+  transition: none !important;
+  animation: none !important;
 }
