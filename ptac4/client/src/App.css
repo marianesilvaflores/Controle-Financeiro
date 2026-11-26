@@ -14,7 +14,7 @@
   margin-bottom: 20px;
   border-radius: 16px;
   color: #fff;
-  background: #1e3a5f;
+  background: #333333;
   box-shadow: var(--sombra);
 }
 
@@ -70,7 +70,7 @@
 
 .regiao form .erro {
   background: var(--despesa-fundo);
-  border: 1px solid #e2c2c2;
+  border: 1px solid #cccccc;
   border-radius: 10px;
   padding: 10px 12px;
   font-size: 0.9rem;
@@ -196,17 +196,17 @@
 .cartao .acoes button:first-child {
   background: #fff;
   color: var(--primaria);
-  border-color: #c5cfdd;
+  border-color: #cccccc;
 }
 
 .cartao .acoes button:first-child:hover:not(:disabled) {
-  background: #eef1f6;
+  background: #f2f2f2;
 }
 
 .cartao .acoes button:last-child {
   background: #fff;
   color: var(--despesa);
-  border-color: #e2c2c2;
+  border-color: #cccccc;
 }
 
 .cartao .acoes button:last-child:hover:not(:disabled) {
@@ -238,7 +238,7 @@
   display: grid;
   place-items: center;
   padding: 20px;
-  background: #1e3a5f;
+  background: #333333;
 }
 
 .login-cartao {
@@ -284,7 +284,7 @@
 .login .erro {
   margin: 0;
   background: var(--despesa-fundo);
-  border: 1px solid #e2c2c2;
+  border: 1px solid #cccccc;
   border-radius: 10px;
   padding: 10px 12px;
   font-size: 0.9rem;
@@ -299,7 +299,7 @@
 }
 
 .botao-link:hover:not(:disabled) {
-  background: #eef1f6;
+  background: #f2f2f2;
 }
 
 /* ---------- Celular ---------- */
@@ -326,4 +326,12 @@
   background-image: none !important;
   transition: none !important;
   animation: none !important;
+}
+
+/* ===== Visual minimo (para remover, apague daqui ate o fim) ===== */
+body, button, input, select, textarea {
+  font-family: Arial, Helvetica, sans-serif !important;
+}
+h1, h2, h3, h4, th, strong {
+  font-weight: normal !important;
 }

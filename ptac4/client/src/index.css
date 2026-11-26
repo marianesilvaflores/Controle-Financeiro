@@ -1,15 +1,15 @@
 :root {
   color-scheme: light;
-  --fundo: #f4f5f7;
+  --fundo: #ffffff;
   --texto: #1b2430;
   --suave: #64748b;
   --borda: #e2e8f0;
-  --primaria: #1e3a5f;
-  --primaria-escura: #152a45;
-  --receita: #2f6b4f;
-  --receita-fundo: #eef5f1;
-  --despesa: #9b2c2c;
-  --despesa-fundo: #f8eeee;
+  --primaria: #333333;
+  --primaria-escura: #111111;
+  --receita: #444444;
+  --receita-fundo: #f2f2f2;
+  --despesa: #444444;
+  --despesa-fundo: #f2f2f2;
   --sombra: 0 1px 2px rgba(15, 23, 42, 0.06), 0 4px 16px rgba(15, 23, 42, 0.06);
   font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
   line-height: 1.5;
@@ -68,7 +68,7 @@ input:focus,
 select:focus {
   outline: none;
   border-color: var(--primaria);
-  box-shadow: 0 0 0 3px rgba(30, 58, 95, 0.2);
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.2);
 }
 
 button {
@@ -96,6 +96,6 @@ button:disabled {
 }
 
 button:focus-visible {
-  outline: 3px solid rgba(30, 58, 95, 0.35);
+  outline: 3px solid rgba(0, 0, 0, 0.35);
   outline-offset: 2px;
 }
