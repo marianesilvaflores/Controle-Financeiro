@@ -335,3 +335,11 @@ body, button, input, select, textarea {
 h1, h2, h3, h4, th, strong {
   font-weight: normal !important;
 }
+
+/* ===== Visual minimo (para remover, apague daqui ate o fim) ===== */
+body, button, input, select, textarea {
+  font-family: Arial, Helvetica, sans-serif !important;
+}
+h1, h2, h3, h4, th, strong {
+  font-weight: normal !important;
+}
