@@ -2,42 +2,46 @@ const express = require('express');
 const crypto = require('node:crypto');
 const { promisify } = require('node:util');
 const { usuarios, sessoes } = require('../dados/banco');
+const { enviarErro } = require('../utils/erros');
 
 const router = express.Router();
 const gerarHash = promisify(crypto.scrypt);
+
 
 router.post('/', async (req, res, next) => {
   try {
     const { nome, email, senha } = req.body || {};
 
     if (typeof nome !== 'string' || nome.trim() === '') {
-      return res.status(400).json({
-        erro: 'O nome é obrigatório.'
-      });
+      return enviarErro(res, 400, 'validation', 'O nome é obrigatório.');
     }
 
     if (typeof email !== 'string' ||
         !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
-      return res.status(400).json({
-        erro: 'Informe um email válido.'
-      });
+      return enviarErro(res, 400, 'validation', 'Informe um email válido.');
     }
 
     if (typeof senha !== 'string' ||
         senha.length < 8 || senha.length > 128) {
-      return res.status(400).json({
-        erro: 'A senha deve ter entre 8 e 128 caracteres.'
-      });
+      return enviarErro(res, 400, 'validation',
+        'A senha deve ter entre 8 e 128 caracteres.');
     }
 
     const emailNormalizado = email.trim().toLowerCase();
+    const emailJaExiste = () =>
+      usuarios.some(usuario => usuario.email === emailNormalizado);
+
+    
+    if (emailJaExiste()) {
+      return enviarErro(res, 409, 'conflict', 'Email já cadastrado.');
+    }
+
     const salt = crypto.randomBytes(16).toString('hex');
     const hash = await gerarHash(senha, salt, 64);
 
-    if (usuarios.some(usuario => usuario.email === emailNormalizado)) {
-      return res.status(409).json({
-        erro: 'Email já cadastrado.'
-      });
+    
+    if (emailJaExiste()) {
+      return enviarErro(res, 409, 'conflict', 'Email já cadastrado.');
     }
 
     const usuario = {
@@ -59,6 +63,8 @@ router.post('/', async (req, res, next) => {
     next(erro);
   }
 });
+
+
 router.post('/login', async (req, res, next) => {
   try {
     const { email, senha } = req.body || {};
@@ -66,9 +72,7 @@ router.post('/login', async (req, res, next) => {
     if (typeof email !== 'string' ||
         typeof senha !== 'string' ||
         senha.length < 8 || senha.length > 128) {
-      return res.status(400).json({
-        erro: 'Informe email e senha válidos.'
-      });
+      return enviarErro(res, 400, 'validation', 'Informe email e senha válidos.');
     }
 
     const usuario = usuarios.find(usuario =>
@@ -76,18 +80,21 @@ router.post('/login', async (req, res, next) => {
     );
 
     if (!usuario) {
-      return res.status(401).json({
-        erro: 'Email ou senha incorretos.'
-      });
+      return enviarErro(res, 401, 'unauthorized', 'Email ou senha incorretos.');
     }
 
     const hash = await gerarHash(senha, usuario.salt, 64);
     const hashSalvo = Buffer.from(usuario.senhaHash, 'hex');
 
     if (!crypto.timingSafeEqual(hash, hashSalvo)) {
-      return res.status(401).json({
-        erro: 'Email ou senha incorretos.'
-      });
+      return enviarErro(res, 401, 'unauthorized', 'Email ou senha incorretos.');
+    }
+
+    
+    for (let i = sessoes.length - 1; i >= 0; i--) {
+      if (sessoes[i].expiraEm <= Date.now()) {
+        sessoes.splice(i, 1);
+      }
     }
 
     const token = crypto.randomBytes(32).toString('hex');
