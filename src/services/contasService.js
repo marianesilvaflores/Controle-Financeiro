@@ -7,12 +7,12 @@ function gerarErro(mensagem, status) {
   return erro;
 }
 
-function listar(usuarioId) {
-  return contasModel.listarPorUsuario(usuarioId);
+async function listar(usuarioId) {
+  return contasModel.buscarTodas(usuarioId);
 }
 
-function buscarPorId(id, usuarioId) {
-  const conta = contasModel.buscarPorId(id, usuarioId);
+async function buscarPorId(id, usuarioId) {
+  const conta = await contasModel.buscarPorId(id, usuarioId);
 
   if (!conta) {
     throw gerarErro('Conta não encontrada.', 404);
@@ -21,7 +21,7 @@ function buscarPorId(id, usuarioId) {
   return conta;
 }
 
-function criar(usuarioId, dados) {
+async function criar(usuarioId, dados) {
   const { nome, saldoInicialCentavos } = dados || {};
 
   if (typeof nome !== 'string' || nome.trim() === '') {
@@ -42,11 +42,11 @@ function criar(usuarioId, dados) {
     saldoInicialCentavos
   };
 
-  return contasModel.criar(conta);
+  return contasModel.inserir(conta);
 }
 
-function atualizar(id, usuarioId, dados) {
-  buscarPorId(id, usuarioId);
+async function atualizar(id, usuarioId, dados) {
+  await buscarPorId(id, usuarioId);
 
   const { nome, saldoInicialCentavos } = dados || {};
 
@@ -87,11 +87,21 @@ function atualizar(id, usuarioId, dados) {
     alteracoes.saldoInicialCentavos = saldoInicialCentavos;
   }
 
-  return contasModel.atualizar(id, usuarioId, alteracoes);
+  const conta = await contasModel.atualizar(
+    id,
+    usuarioId,
+    alteracoes
+  );
+
+  if (!conta) {
+    throw gerarErro('Conta não encontrada.', 404);
+  }
+
+  return conta;
 }
 
-function excluir(id, usuarioId) {
-  const excluiu = contasModel.excluir(id, usuarioId);
+async function excluir(id, usuarioId) {
+  const excluiu = await contasModel.remover(id, usuarioId);
 
   if (!excluiu) {
     throw gerarErro('Conta não encontrada.', 404);

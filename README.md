@@ -13,10 +13,12 @@ API de controle financeiro pessoal desenvolvida com Node.js e Express.
 
 ## Como executar
 
-É necessário ter Node.js e npm instalados.
+É necessário ter Node.js, npm e Docker instalados.
 
 1. Execute `npm install` para instalar as dependências.
-2. Execute `npm start` para iniciar o servidor.
+2. Copie `.env.example` para `.env`.
+3. Execute `npm run dev` para iniciar o MongoDB e a API.
+4. Para executar sem monitorar alterações: `npm run db:up` e depois `npm start`.
 3. A API estará disponível na porta 3000.
 
 ## Usuários e login
@@ -71,10 +73,10 @@ Cada usuário só pode consultar, editar e excluir suas próprias contas.
 
 ## Armazenamento atual
 
-Os dados ficam em memória.
-Ao reiniciar o servidor, usuários, contas e sessões são apagados.
-Os tokens de login têm validade de oito horas, desde que o servidor
-não seja reiniciado.
+Os dados ficam no MongoDB, no volume Docker controle-financeiro-data.
+Reiniciar a API preserva os registros e as sessões. Os tokens valem oito horas.
+O comando npm run db:reset apaga o container e o volume com os dados.
+
 ## Relatórios
 
 As funcionalidades de relatório permitem consultar informações financeiras do usuário autenticado.
@@ -83,3 +85,56 @@ As funcionalidades de relatório permitem consultar informações financeiras do
 
 ```http
 GET /relatorios/saldo/:contaId
+```
+### Lancamentos no MongoDB
+
+- POST /lancamentos: cadastra uma receita ou despesa.
+- GET /lancamentos: lista apenas os lancamentos do usuario autenticado.
+- Envie o cabecalho Authorization com Bearer e o token recebido no login.
+
+Exemplo do corpo do cadastro (substitua os IDs por uma conta e uma categoria suas):
+
+```json
+{
+  "descricao": "Compra no mercado",
+  "tipo": "despesa",
+  "valorCentavos": 1250,
+  "data": "2026-11-26",
+  "contaId": "id-da-conta",
+  "categoriaId": "id-da-categoria"
+}
+```
+
+O valor deve ser um inteiro positivo em centavos e a data deve ser valida,
+no formato AAAA-MM-DD. A categoria precisa ter o mesmo tipo do lancamento.
+Conta e categoria devem pertencer ao usuario autenticado.
+
+O Model possui inserir, buscarTodas, buscarPorId, atualizar e remover.
+As rotas tambem oferecem GET /lancamentos/:id, PATCH /lancamentos/:id e DELETE /lancamentos/:id.
+No PATCH, envie apenas os campos que deseja alterar.
+
+## Estrutura do backend PTAS
+
+O fluxo e routes -> controllers -> services -> models.
+A conexao MongoDB fica em src/config/mongodb.js.
+Os Models de usuarios, sessoes, contas, categorias e lancamentos exportam
+somente inserir, buscarTodas, buscarPorId, atualizar e remover.
+Os relatorios usam os Models dessas entidades; nao existe uma colecao de relatorios.
+
+## Relatorios disponiveis
+
+Todos exigem o token de login e usam apenas os dados do proprio usuario.
+
+- GET /relatorios/saldo/:contaId
+- GET /relatorios/extrato?inicio=2026-11-01&fim=2026-11-30
+- GET /relatorios/categorias
+- GET /relatorios/mensal
+
+## Verificacao
+
+Com o MongoDB iniciado, execute npm test na raiz.
+O teste usa o banco controle_financeiro_testes e remove somente os registros que criou.
+Verifica cadastro, consulta, alteracao, exclusao, validacoes, isolamento por usuario
+e os quatro relatorios usando a API e o MongoDB.
+
+O projeto PTAC esta na pasta ptac4 e possui instrucoes proprias.

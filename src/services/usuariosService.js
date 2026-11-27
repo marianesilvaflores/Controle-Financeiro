@@ -1,6 +1,7 @@
 const crypto = require('node:crypto');
 const { promisify } = require('node:util');
 const usuariosModel = require('../models/usuariosModel');
+const sessoesModel = require('../models/sessoesModel');
 
 const gerarHash = promisify(crypto.scrypt);
 
@@ -36,20 +37,35 @@ async function cadastrar(dados) {
   }
 
   const emailNormalizado = email.trim().toLowerCase();
-  const salt = crypto.randomBytes(16).toString('hex');
-  const hash = await gerarHash(senha, salt, 64);
 
-  if (usuariosModel.buscarPorEmail(emailNormalizado)) {
+  const existentes = await usuariosModel.buscarTodas({
+    email: emailNormalizado
+  });
+
+  if (existentes.length > 0) {
     throw gerarErro('Email já cadastrado.', 409);
   }
 
-  const usuario = usuariosModel.criar({
-    id: crypto.randomUUID(),
-    nome: nome.trim(),
-    email: emailNormalizado,
-    salt,
-    senhaHash: hash.toString('hex')
-  });
+  const salt = crypto.randomBytes(16).toString('hex');
+  const hash = await gerarHash(senha, salt, 64);
+
+  let usuario;
+
+  try {
+    usuario = await usuariosModel.inserir({
+      id: crypto.randomUUID(),
+      nome: nome.trim(),
+      email: emailNormalizado,
+      salt,
+      senhaHash: hash.toString('hex')
+    });
+  } catch (erro) {
+    if (erro.code === 11000) {
+      throw gerarErro('Email já cadastrado.', 409);
+    }
+
+    throw erro;
+  }
 
   return {
     id: usuario.id,
@@ -70,9 +86,11 @@ async function login(dados) {
     throw gerarErro('Informe email e senha válidos.', 400);
   }
 
-  const usuario = usuariosModel.buscarPorEmail(
-    email.trim().toLowerCase()
-  );
+  const usuarios = await usuariosModel.buscarTodas({
+    email: email.trim().toLowerCase()
+  });
+
+  const usuario = usuarios[0];
 
   if (!usuario) {
     throw gerarErro('Email ou senha incorretos.', 401);
@@ -81,14 +99,17 @@ async function login(dados) {
   const hash = await gerarHash(senha, usuario.salt, 64);
   const hashSalvo = Buffer.from(usuario.senhaHash, 'hex');
 
-  if (!crypto.timingSafeEqual(hash, hashSalvo)) {
+  if (
+    hash.length !== hashSalvo.length ||
+    !crypto.timingSafeEqual(hash, hashSalvo)
+  ) {
     throw gerarErro('Email ou senha incorretos.', 401);
   }
 
   const token = crypto.randomBytes(32).toString('hex');
 
-  usuariosModel.criarSessao({
-    token,
+  await sessoesModel.inserir({
+    id: token,
     usuarioId: usuario.id,
     expiraEm: Date.now() + 8 * 60 * 60 * 1000
   });
