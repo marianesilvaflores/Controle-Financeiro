@@ -83,3 +83,28 @@ As funcionalidades de relatório permitem consultar informações financeiras do
 
 ```http
 GET /relatorios/saldo/:contaId
+### Lancamentos no MongoDB
+
+- POST /lancamentos: cadastra uma receita ou despesa.
+- GET /lancamentos: lista apenas os lancamentos do usuario autenticado.
+- Envie o cabecalho Authorization com Bearer e o token recebido no login.
+
+Exemplo do corpo do cadastro (substitua os IDs por uma conta e uma categoria suas):
+
+```json
+{
+  "descricao": "Compra no mercado",
+  "tipo": "despesa",
+  "valorCentavos": 1250,
+  "data": "2026-11-26",
+  "contaId": "id-da-conta",
+  "categoriaId": "id-da-categoria"
+}
+```
+
+O valor deve ser um inteiro positivo em centavos e a data deve ser valida,
+no formato AAAA-MM-DD. A categoria precisa ter o mesmo tipo do lancamento.
+Conta e categoria devem pertencer ao usuario autenticado.
+
+O Model possui inserir, buscarTodas, buscarPorId, atualizar e remover.
+Nesta etapa, as rotas de lancamentos oferecem cadastro e listagem.
