@@ -13,7 +13,7 @@ async function listar(usuarioId) {
   return lancamentosModel.buscarTodas(usuarioId);
 }
 
-async function criar(usuarioId, dados) {
+async function validar(usuarioId, dados) {
   const { descricao, tipo, valorCentavos, data, contaId, categoriaId } = dados || {};
 
   if (typeof descricao !== 'string' || !descricao.trim()) {
@@ -48,16 +48,42 @@ async function criar(usuarioId, dados) {
     throw gerarErro('O tipo do lancamento deve ser igual ao da categoria.', 400);
   }
 
-  return lancamentosModel.inserir({
-    id: crypto.randomUUID(),
-    usuarioId,
+  return {
     descricao: descricao.trim(),
     tipo,
     valorCentavos,
     data,
     contaId,
     categoriaId
-  });
+  };
 }
 
-module.exports = { listar, criar };
+async function criar(usuarioId, dados) {
+  const campos = await validar(usuarioId, dados);
+  return lancamentosModel.inserir({ id: crypto.randomUUID(), usuarioId, ...campos });
+}
+
+async function buscarPorId(id, usuarioId) {
+  const lancamento = await lancamentosModel.buscarPorId(id, usuarioId);
+  if (!lancamento) throw gerarErro('Lancamento nao encontrado.', 404);
+  return lancamento;
+}
+
+async function atualizar(id, usuarioId, dados) {
+  const atual = await buscarPorId(id, usuarioId);
+  const camposPermitidos = ['descricao', 'tipo', 'valorCentavos', 'data', 'contaId', 'categoriaId'];
+  if (!dados || !camposPermitidos.some(campo => dados[campo] !== undefined)) {
+    throw gerarErro('Informe algum campo do lancamento para atualizar.', 400);
+  }
+  const campos = await validar(usuarioId, { ...atual, ...dados });
+  const alterado = await lancamentosModel.atualizar(id, usuarioId, campos);
+  if (!alterado) throw gerarErro('Lancamento nao encontrado.', 404);
+  return alterado;
+}
+
+async function excluir(id, usuarioId) {
+  const removeu = await lancamentosModel.remover(id, usuarioId);
+  if (!removeu) throw gerarErro('Lancamento nao encontrado.', 404);
+}
+
+module.exports = { listar, criar, buscarPorId, atualizar, excluir };
