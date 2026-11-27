@@ -5,11 +5,14 @@ const rotasUsuarios = require('./routes/usuarios');
 const routesCategorias = require('./routes/categorias');
 const routesRelatorios = require('./routes/relatorios');
 
+const routesLancamentos = require('./routes/lancamentos');
+
 const app = express();
 
 app.use(express.json());
 
 app.use('/contas', routesContas);
+app.use('/lancamentos', routesLancamentos);
 app.use('/usuarios', rotasUsuarios);
 app.use('/categorias', autenticar, routesCategorias);
 app.use('/relatorios', routesRelatorios);
