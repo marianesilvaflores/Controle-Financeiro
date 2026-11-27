@@ -1,3 +1,4 @@
+const crypto = require('node:crypto');
 const categoriasModel = require('../models/categoriasModel');
 
 function gerarErro(mensagem, status) {
@@ -6,11 +7,11 @@ function gerarErro(mensagem, status) {
   return erro;
 }
 
-function listar(usuarioId) {
-  return categoriasModel.listarPorUsuario(usuarioId);
+async function listar(usuarioId) {
+  return categoriasModel.buscarTodas(usuarioId);
 }
 
-function criar(usuarioId, dados) {
+async function criar(usuarioId, dados) {
   const { nome, tipo } = dados || {};
 
   if (typeof nome !== 'string' || !nome.trim()) {
@@ -24,7 +25,8 @@ function criar(usuarioId, dados) {
     );
   }
 
-  return categoriasModel.criar({
+  return categoriasModel.inserir({
+    id: crypto.randomUUID(),
     usuarioId,
     nome: nome.trim(),
     tipo

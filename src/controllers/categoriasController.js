@@ -12,18 +12,18 @@ function responderErro(erro, res) {
   });
 }
 
-function listar(req, res) {
+async function listar(req, res) {
   try {
-    const categorias = categoriasService.listar(req.usuarioId);
+    const categorias = await categoriasService.listar(req.usuarioId);
     return res.status(200).json(categorias);
   } catch (erro) {
     return responderErro(erro, res);
   }
 }
 
-function criar(req, res) {
+async function criar(req, res) {
   try {
-    const categoria = categoriasService.criar(
+    const categoria = await categoriasService.criar(
       req.usuarioId,
       req.body
     );

@@ -1,28 +1,49 @@
-const { categorias } = require('../dados/banco');
+const { obterBanco } = require('../config/mongodb');
 
-function listarPorUsuario(usuarioId) {
-  return categorias.filter(categoria =>
-    categoria.usuarioId === usuarioId
-  );
-}
-
-function criar(dados) {
-  const id = categorias.length
-    ? Math.max(...categorias.map(categoria => categoria.id)) + 1
-    : 1;
-
-  const categoria = {
-    id,
-    usuarioId: dados.usuarioId,
-    nome: dados.nome,
-    tipo: dados.tipo
-  };
-
-  categorias.push(categoria);
+async function inserir(categoria) {
+  const documento = { ...categoria };
+  await obterBanco().collection('categorias').insertOne(documento);
   return categoria;
 }
 
+async function buscarTodas(usuarioId) {
+  return obterBanco()
+    .collection('categorias')
+    .find({ usuarioId }, { projection: { _id: 0 } })
+    .toArray();
+}
+
+async function buscarPorId(id, usuarioId) {
+  return obterBanco().collection('categorias').findOne(
+    { id, usuarioId },
+    { projection: { _id: 0 } }
+  );
+}
+
+async function atualizar(id, usuarioId, dados) {
+  return obterBanco().collection('categorias').findOneAndUpdate(
+    { id, usuarioId },
+    { $set: dados },
+    {
+      returnDocument: 'after',
+      includeResultMetadata: false,
+      projection: { _id: 0 }
+    }
+  );
+}
+
+async function remover(id, usuarioId) {
+  const resultado = await obterBanco()
+    .collection('categorias')
+    .deleteOne({ id, usuarioId });
+
+  return resultado.deletedCount === 1;
+}
+
 module.exports = {
-  listarPorUsuario,
-  criar
+  inserir,
+  buscarTodas,
+  buscarPorId,
+  atualizar,
+  remover
 };
