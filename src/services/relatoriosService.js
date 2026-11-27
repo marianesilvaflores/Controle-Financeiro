@@ -1,4 +1,4 @@
-const relatoriosModel = require('../models/relatoriosModel');
+const lancamentosModel = require('../models/lancamentosModel');
 const contasModel = require('../models/contasModel');
 const categoriasModel = require('../models/categoriasModel');
 
@@ -29,15 +29,14 @@ function calcularTotais(lancamentos) {
   };
 }
 
-function saldoPorConta(contaId, usuarioId) {
-  const conta = contasModel.buscarPorId(contaId, usuarioId);
+async function saldoPorConta(contaId, usuarioId) {
+  const conta = await contasModel.buscarPorId(contaId, usuarioId);
 
   if (!conta) {
     throw gerarErro('Conta não encontrada.', 404);
   }
 
-  const lancamentos = relatoriosModel
-    .listarLancamentos(usuarioId)
+  const lancamentos = (await lancamentosModel.buscarTodas(usuarioId))
     .filter(lancamento => lancamento.contaId === conta.id);
 
   const totais = calcularTotais(lancamentos);
@@ -62,7 +61,7 @@ function validarData(valor) {
     data.toISOString().slice(0, 10) === valor;
 }
 
-function extrato(usuarioId, filtros) {
+async function extrato(usuarioId, filtros) {
   const { inicio, fim } = filtros || {};
 
   if (!validarData(inicio) || !validarData(fim)) {
@@ -76,8 +75,7 @@ function extrato(usuarioId, filtros) {
     throw gerarErro('A data inicial deve ser anterior ou igual à final.', 400);
   }
 
-  const lancamentos = relatoriosModel
-    .listarLancamentos(usuarioId)
+  const lancamentos = (await lancamentosModel.buscarTodas(usuarioId))
     .filter(lancamento =>
       lancamento.data >= inicio && lancamento.data <= fim
     );
@@ -90,9 +88,9 @@ function extrato(usuarioId, filtros) {
   };
 }
 
-function porCategoria(usuarioId) {
-  const lancamentos = relatoriosModel.listarLancamentos(usuarioId);
-  const categorias = categoriasModel.listarPorUsuario(usuarioId);
+async function porCategoria(usuarioId) {
+  const lancamentos = (await lancamentosModel.buscarTodas(usuarioId));
+  const categorias = await categoriasModel.buscarTodas(usuarioId);
   const resultado = [];
 
   for (const categoria of categorias) {
@@ -115,8 +113,8 @@ function porCategoria(usuarioId) {
   return resultado;
 }
 
-function mensal(usuarioId) {
-  const lancamentos = relatoriosModel.listarLancamentos(usuarioId);
+async function mensal(usuarioId) {
+  const lancamentos = (await lancamentosModel.buscarTodas(usuarioId));
   const grupos = new Map();
 
   for (const lancamento of lancamentos) {

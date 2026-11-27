@@ -18,9 +18,9 @@ function status(req, res) {
   });
 }
 
-function saldoPorConta(req, res) {
+async function saldoPorConta(req, res) {
   try {
-    const resultado = relatoriosService.saldoPorConta(
+    const resultado = await relatoriosService.saldoPorConta(
       req.params.contaId,
       req.usuarioId
     );
@@ -31,9 +31,9 @@ function saldoPorConta(req, res) {
   }
 }
 
-function extrato(req, res) {
+async function extrato(req, res) {
   try {
-    const resultado = relatoriosService.extrato(
+    const resultado = await relatoriosService.extrato(
       req.usuarioId,
       req.query
     );
@@ -44,18 +44,18 @@ function extrato(req, res) {
   }
 }
 
-function porCategoria(req, res) {
+async function porCategoria(req, res) {
   try {
-    const resultado = relatoriosService.porCategoria(req.usuarioId);
+    const resultado = await relatoriosService.porCategoria(req.usuarioId);
     return res.status(200).json(resultado);
   } catch (erro) {
     return responderErro(erro, res);
   }
 }
 
-function mensal(req, res) {
+async function mensal(req, res) {
   try {
-    const resultado = relatoriosService.mensal(req.usuarioId);
+    const resultado = await relatoriosService.mensal(req.usuarioId);
     return res.status(200).json(resultado);
   } catch (erro) {
     return responderErro(erro, res);
